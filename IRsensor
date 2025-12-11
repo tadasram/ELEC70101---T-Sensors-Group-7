@@ -1,0 +1,39 @@
+#include <Wire.h>
+#include <Adafruit_MLX90614.h>
+
+// Create an instance of the sensor
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+
+// CONNECT TO 5V RATHER THAN 3.3V PLEASE
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("MLX90614 Temperature Test");
+
+
+  if (!mlx.begin()) {
+    Serial.println("Error connecting to MLX90614. Check wiring!");
+
+    while (1);
+  }
+}
+
+void loop() {
+
+  // Read ambient temperature (Celsius)
+  double ambientTemp = mlx.readAmbientTempC();
+  // Read object temperature (Celsius)
+  double objectTemp = mlx.readObjectTempC();
+
+ // Serial.print("Ambient Temp: ");
+ // Serial.print(ambientTemp);
+ // Serial.print(" °C\t");
+
+  //Serial.print("Object Temp: ");
+  Serial.print(objectTemp);
+  Serial.println();
+ // Serial.println(" °C");
+
+  delay(1000); // Wait 1 second between readings
+
+}
