@@ -1,0 +1,49 @@
+%% Temperature Sensor Coursework Report
+%% Imperial College London, Dep. of Electrical and Electronic Engineering, ELEC70101 - Sensors, Group 7: Henry Milne, Tadas Ramancevicius, Ulvi Babyev, Mehwish, Bhatti
+%% Group 7
+
+%% TMP36 Analogue Sensor Data Analysis
+
+% Import Data
+Fluke = [52.8; 52.6; 51.6; 51.2; 50.4; 49.7; 49.5; 49.3; 48.9; 48.3; 47.5; 46.3; 45.6; 44.8; 44.3; 44.2; 42.1; 41.7; 41.3; 39.4; 38.8; 38; 37.6; 36.5; 36.3; 36.2; 35.4; 34.3; 34.1; 33; 32.8; 32.2; 31.8; 31.2; 31; 30; 29.7; 28.6; 28.5; 28; 27.1; 26.9; 26.7; 25.9; 25.6; 25.3; 24.7; 24.6; 23.5; 23.3; 22.9; 22.8; 22.6; 22; 21.9; 21.7; 21.2; 20.8; 20.6; 20.3; 19.5];
+Run1 = [NaN; 51.613; 51.29; NaN; NaN; 50; NaN; 48.387; NaN; NaN; NaN; 45.806; NaN; NaN; NaN; 43.226; 40.968; NaN; NaN; 38.71; NaN; 36.774; NaN; NaN; NaN; 35.161; NaN; NaN; 32.581; NaN; NaN; 30.968; NaN; NaN; NaN; NaN; NaN; NaN; 28.71; NaN; 27.097; NaN; NaN; 25.484; NaN; NaN; 24.516; NaN; 22.258; NaN; NaN; 21.613; NaN; NaN; 20.645; NaN; NaN; 19.032; NaN; 18.71; NaN];
+Run2 = [NaN; NaN; NaN; 51.613; NaN; NaN; 50; NaN; 48.71; NaN; NaN; NaN; NaN; 44.516; 43.548; NaN; NaN; NaN; 40.968; 39.677; NaN; NaN; NaN; NaN; 36.774; NaN; NaN; 34.194; NaN; 33.226; NaN; NaN; NaN; 30.968; NaN; NaN; 29.355; NaN; NaN; 27.097; NaN; NaN; 25.806; NaN; 24.516; NaN; NaN; NaN; NaN; 22.581; NaN; NaN; 21.613; 20.968; NaN; NaN; 20; NaN; 19.032; 19.032; NaN];
+Run3 = [52.581; NaN; NaN; NaN; 50; NaN; NaN; NaN; NaN; 48.065; 47.097; NaN; 44.839; NaN; NaN; NaN; NaN; 41.935; 41.613; NaN; 38.71; NaN; 37.097; 36.452; NaN; NaN; 35.484; 34.194; NaN; NaN; 32.581; NaN; 30.968; NaN; 30.645; 30; NaN; 28.065; NaN; 27.097; NaN; 25.806; NaN; NaN; NaN; 23.871; NaN; 23.226; 22.258; NaN; 21.613; NaN; NaN; NaN; NaN; 20.3; NaN; NaN; 19.355; NaN; 18.065];
+
+% Interpolation
+Fluke_min = floor(min(Fluke));
+Fluke_max = ceil(max(Fluke));
+Fluke_step = Fluke_max:-1:Fluke_min;
+Run1_interp = interp1(Fluke(~isnan(Run1)), Run1(~isnan(Run1)), Fluke_step, 'pchip', 'extrap');
+Run2_interp = interp1(Fluke(~isnan(Run2)), Run2(~isnan(Run2)), Fluke_step, 'pchip', 'extrap');
+Run3_interp = interp1(Fluke(~isnan(Run3)), Run3(~isnan(Run3)), Fluke_step, 'pchip', 'extrap');
+
+
+MaxMin = max([Run1_interp; Run2_interp; Run3_interp], [], 1) - min([Run1_interp; Run2_interp; Run3_interp], [], 1);
+integral_Run1 = trapz(Fluke_step, Run1_interp);
+
+figure;
+hold on;
+
+% Left Y axis
+yyaxis left
+p1 = plot(Fluke_step, Run1_interp, '-o', 'Color', [0 0 1], 'DisplayName', 'Run1'); hold on; % blue
+p2 = plot(Fluke_step, Run2_interp, '-o', 'Color', [0 0.8 0.5], 'DisplayName', 'Run2');         % darker blue
+p3 = plot(Fluke_step, Run3_interp, '-o', 'Color', [1 0 1], 'DisplayName', 'Run3');         % lighter blue
+ylabel('Measured Temperature (°C)');
+ylim([18 55.7]);  % left axis limits
+
+% Right Y axis
+yyaxis right
+p4 = plot(Fluke_step, MaxMin, '-','Color',[1 0.5 0], 'LineWidth', 1.5, 'DisplayName', 'MaximumDeviation'); % orange
+ylabel('Maximum Deviation (°C)');
+ylim([0 max(MaxMin)*1.1]);  % right axis limits
+
+% Extra
+xlabel('Actual Temperature (°C)');
+title('Analogue Sensor - Precision & Stability');
+grid on;
+xlim([20 52]);
+
+% Legend
+legend([p1 p2 p3 p4], 'Location', 'best', 'Position', [0.1558 0.7558 0.2750 0.1464])
