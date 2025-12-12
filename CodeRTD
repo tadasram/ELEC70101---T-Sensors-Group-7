@@ -1,0 +1,29 @@
+const int SensorPin = A0;
+const int REAL_ADC_HOT = 411; 
+const int TEMP_HOT = 65; 
+const int REAL_ADC_COLD = 468;
+const int TEMP_COLD = 19;
+
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("PT1000 calibrated.");
+}
+
+void loop() {
+  long sum = 0;
+  for (int i = 0; i < 20; i++) {
+    sum += analogRead(SensorPin);
+    delay(1); 
+  }
+  int sensorValue = sum / 20; 
+  int temperatureC = map(sensorValue, REAL_ADC_SOYUQ, REAL_ADC_ISTI, TEMP_SOYUQ, TEMP_ISTI);
+
+  Serial.print("Sensor ADC: ");
+  Serial.print(sensorValue);
+  Serial.print("  |  Temperatur: ");
+  Serial.print(temperatureC);
+  Serial.println(" °C");
+
+  delay(1000); 
+}
